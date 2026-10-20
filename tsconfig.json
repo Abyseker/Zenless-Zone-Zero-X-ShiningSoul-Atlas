@@ -1,0 +1,30 @@
+{
+  "include": [
+    "app/Album.tsx",
+    "app/model.ts",
+    "app/cookie-storage.ts",
+    "web/**/*.tsx",
+    "vite.static.config.ts"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "module": "esnext",
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ],
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true
+  }
+}

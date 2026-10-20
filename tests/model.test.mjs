@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {cycle,withQuantity,validEntry,groupCards} from '../app/model.ts';
+const cards=JSON.parse(fs.readFileSync(new URL('../app/data/cards.json',import.meta.url)));
+let e={status:0,quantity:0,updatedAt:0};e=cycle(e,1);assert.deepEqual(e,{status:1,quantity:1,updatedAt:1});
+e=withQuantity(e,4,2);e=cycle(e,3);assert.deepEqual(e,{status:2,quantity:4,updatedAt:3});e=cycle(e,4);assert.equal(e.quantity,0);assert.equal(e.status,0);
+assert.equal(withQuantity(e,3,5).status,1);assert.equal(withQuantity({status:2,quantity:4,updatedAt:3},0,5).status,0);
+for(const q of [-1,1.5,10000,NaN])assert.throws(()=>withQuantity(e,q,1));
+assert.equal(validEntry({status:2,quantity:0,updatedAt:1}),false);assert.equal(validEntry({status:0,quantity:1,updatedAt:1}),false);
+assert.equal(new Set(cards.map(c=>c.id)).size,178);const main=cards.filter(c=>c.section==='main');assert.equal(main.length,164);
+assert.equal(groupCards(main,'rarity','全部').flatMap(([_,cc])=>cc).length,164);
+assert.equal(groupCards(main,'agent','叶瞬光').length,1);assert.equal(groupCards(main,'agent','叶瞬光')[0][1].length,5);
+const byAgent=groupCards(main,'agent','全部');assert(byAgent.flatMap(([_,cc])=>cc).length>164);assert(byAgent.every(([agent,cc])=>cc.every(c=>c.agents.includes(agent)||agent==='非代理人')));
+assert.equal(groupCards(main,'faction','反舌鸟').length,1);assert(groupCards(main,'faction','云岿山')[0][1].every(c=>c.factions.includes('云岿山')));
+for(const c of cards)assert(fs.existsSync(new URL('../public'+c.image,import.meta.url)));
+console.log('Status cycle, quantity boundaries, grouping, card identities and all 178 images verified.');
